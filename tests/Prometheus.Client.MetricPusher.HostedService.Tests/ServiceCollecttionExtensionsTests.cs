@@ -8,9 +8,9 @@ namespace Prometheus.Client.MetricPusher.HostedService.Tests
         [Fact]
         public void AddMetricPusherService_WithNullMetricPusher_ThrowsArgumentNullException()
         {
-            IServiceCollection servicesCollection = Moq.Mock.Of<IServiceCollection>();
+            var servicesCollection = Substitute.For<IServiceCollection>();
 
-            Action act = () => ServiceCollectionExtensions.AddMetricPusherService(servicesCollection, null, TimeSpan.FromSeconds(1));
+            Action act = () => servicesCollection.AddMetricPusherService(null, TimeSpan.FromSeconds(1));
 
             act.Should().Throw<ArgumentNullException>();
         }
@@ -18,10 +18,10 @@ namespace Prometheus.Client.MetricPusher.HostedService.Tests
         [Fact]
         public void AddMetricPusherService_WithZeroTimeInterval_ThrowsArgumentOutOfRangeException()
         {
-            IServiceCollection servicesCollection = Moq.Mock.Of<IServiceCollection>();
-            IMetricPusher metricPusher = Moq.Mock.Of<IMetricPusher>();
+            var servicesCollection = Substitute.For<IServiceCollection>();
+            var metricPusher = Substitute.For<IMetricPusher>();
 
-            Action act = () => ServiceCollectionExtensions.AddMetricPusherService(servicesCollection, metricPusher, TimeSpan.Zero);
+            Action act = () => servicesCollection.AddMetricPusherService(metricPusher, TimeSpan.Zero);
 
             act.Should().Throw<ArgumentOutOfRangeException>();
         }
@@ -29,10 +29,10 @@ namespace Prometheus.Client.MetricPusher.HostedService.Tests
         [Fact]
         public void AddMetricPusherService_WithValidParameterValues_AddsMetricPusherServiceInServiceCollection()
         {
-            IServiceCollection servicesCollection = new ServiceCollection();
-            IMetricPusher metricPusher = Moq.Mock.Of<IMetricPusher>();
+            var servicesCollection = new ServiceCollection();
+            var metricPusher = Substitute.For<IMetricPusher>();
 
-            ServiceCollectionExtensions.AddMetricPusherService(servicesCollection, metricPusher, TimeSpan.FromSeconds(1));
+            servicesCollection.AddMetricPusherService(metricPusher, TimeSpan.FromSeconds(1));
             var provider = servicesCollection.BuildServiceProvider();
             var service = provider.GetRequiredService<IHostedService>();
 
